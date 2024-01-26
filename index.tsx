@@ -22,7 +22,7 @@ const Layout: FC = (props) => {
   );
 };
 
-const Top: FC<{ messages: string[] }> = (props: {}) => {
+const Top: FC<{ messages: string[] }> = () => {
   return (
     <Layout>
       <a class="text-xl" href="/">Threshold Calculator</a>
