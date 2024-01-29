@@ -1,4 +1,4 @@
-type Locality = {
+export type Locality = {
     key: string
     displayName: string
 }

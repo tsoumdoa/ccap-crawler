@@ -7,8 +7,8 @@ import { renderer } from "./renderer.tsx";
 import { SUB_CLUSTER_LIST } from "./static/sub-cluster.ts";
 import { LOCALITY } from "./static/locality.ts";
 import { Threshold, ThresholdCrawler } from "./crawler/threshold-calculator.ts";
-import { renderToReadableStream } from "https://deno.land/x/hono@v3.12.7/jsx/streaming.ts";
-import {sampleData} from "./static/sampleData.ts";
+import { CrawlAll } from "./crawler/crawl-all.ts";
+import { GetThreashold } from "./crawler/get-threashold.ts";
 
 const app = new Hono();
 
@@ -135,13 +135,10 @@ const Crawler: FC<{ messages: string[] }> = async (
       </Layout>
     );
   }
-  const startT = Date.now();
 
   // const res = await ThresholdCrawler(props.location);
-	const res = sampleData as Threshold[];
+  const res = GetThreashold(props.location).data;
 
-  const endT = Date.now();
-  const timeS = Math.round((endT - startT) / 1000);
   const data35Degree = res.filter((data) => data.temperature === 35);
   const data40Degree = res.filter((data) => data.temperature === 40);
   return (
@@ -151,9 +148,6 @@ const Crawler: FC<{ messages: string[] }> = async (
         <div class="text-lg font-bold">
           {props.location}
         </div>
-        <span class="text-xs">
-          Finished in {timeS} secs
-        </span>
         <div class="flex flex-col">
           <div>
             <span class="text-lg font-bold underline">
@@ -196,6 +190,13 @@ const Loading: FC<{ messages: string[] }> = (props: { status: string }) => {
 app.get("/", (c) => {
   return c.render(<Top />);
 });
+
+// app.get("/crawl", async (c) => {
+//   const input = await c.req.parseBody();
+//   await CrawlAll();
+//
+//   return c.render(<Top />);
+// });
 
 app.post("/", async (c) => {
   const input = await c.req.parseBody();
