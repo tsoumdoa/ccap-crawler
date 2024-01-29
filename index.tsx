@@ -8,6 +8,7 @@ import { SUB_CLUSTER_LIST } from "./static/sub-cluster.ts";
 import { LOCALITY } from "./static/locality.ts";
 import { Threshold, ThresholdCrawler } from "./crawler/threshold-calculator.ts";
 import { renderToReadableStream } from "https://deno.land/x/hono@v3.12.7/jsx/streaming.ts";
+import {sampleData} from "./static/sampleData.ts";
 
 const app = new Hono();
 
@@ -127,7 +128,7 @@ const Crawler: FC<{ messages: string[] }> = async (
   if (!props.location) {
     return (
       <Layout>
-      <a class="text-xl" href="/">Threshold Calculator</a>
+        <a class="text-xl" href="/">Threshold Calculator</a>
         <div>
           Try again - pick the location
         </div>
@@ -136,7 +137,9 @@ const Crawler: FC<{ messages: string[] }> = async (
   }
   const startT = Date.now();
 
-  const res = await ThresholdCrawler(props.location);
+  // const res = await ThresholdCrawler(props.location);
+	const res = sampleData as Threshold[];
+
   const endT = Date.now();
   const timeS = Math.round((endT - startT) / 1000);
   const data35Degree = res.filter((data) => data.temperature === 35);
@@ -200,4 +203,9 @@ app.post("/", async (c) => {
   return c.render(<Crawler location={input.location} />);
 });
 
-Deno.serve(app.fetch);
+Deno.serve(
+  {
+    port: 8080,
+  },
+  app.fetch,
+);
